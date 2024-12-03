@@ -1,19 +1,25 @@
-import { defineBackend, secret } from "@aws-amplify/backend";
-import { auth } from './auth/resource';
-import { data } from './data/resource';
+import { defineBackend, secret, FunctionHandler } from "@aws-amplify/backend";
+import { auth } from "./auth/resource";
+import { data } from "./data/resource";
 
-const SECRET_A = secret("SECRET_A");
+const mySecret = secret("SECRET_A");
+
+// Define the handler function explicitly
+const customHandler: FunctionHandler = async () => {
+  return {
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ secretValue: mySecret }),
+  };
+};
 
 defineBackend({
   auth,
   data,
-  async customHandler(event, context) {
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ secretValue: SECRET_A }),
-    };
+  custom: {
+    name: "CustomHandler",
+    handler: customHandler,
   },
 });
