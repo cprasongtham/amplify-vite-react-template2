@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Schema } from "../amplify/data/resource";
+import { secretA } from "../amplify/secret/resource";
 import { generateClient } from "aws-amplify/data";
 
 const client = generateClient<Schema>();
@@ -11,10 +12,6 @@ function App() {
     client.models.Todo.observeQuery().subscribe({
       next: (data) => setTodos([...data.items]),
     });
-    fetch("/customHandler")
-      .then((res) => res.json())
-      .then((data) => setSecret(data.secretValue))
-      .catch((error) => console.error("Error fetching secret:", error));
   }, []);
 
   function createTodo() {
@@ -23,7 +20,7 @@ function App() {
 
   return (
     <main>
-      <h1>My todos {secret && `- ${secret}`}</h1>
+      <h1>My todos {secretA}</h1>
       <button onClick={createTodo}>+ new</button>
       <ul>
         {todos.map((todo) => (
